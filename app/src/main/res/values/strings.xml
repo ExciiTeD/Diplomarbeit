@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Wave~Steg</string>
+    <string name="description">wave</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="button1_text">Write</string>
+    <string name="button2_text">read</string>
+    <string name="button3_text">Play</string>
+    <string name="button4_text">Record</string>
+    <string name="heading_about">What is Wave~Steg?</string>
+    <string name="helpButtondDescription">HelpButton</string>
+    <string name="textView_Password">Password</string>
+    <string name="textView_Message">Message</string>
+    <string name="textView_Message_Description">Message</string>
+    <string name="textView_Password_Description">Description</string>
+    <string name="editText_Password_Description">Enter Password here</string>
+    <string name="editText_Message_Description">Enter Text you want to hide here</string>
+    <string name="button5_fileSearch_Text">Search File</string>
+    <string name="textView_File">File: </string>
+    <string name="button_HideMSG">Hide my message</string>
+    <string name="button_FindMSG">Find my message</string>
+    <string name="buttonStart">Start</string>
+    <string name="buttonStop">Stop</string>
+    <string name="backButton">Back </string>
+</resources>
