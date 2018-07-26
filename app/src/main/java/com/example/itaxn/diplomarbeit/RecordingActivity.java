@@ -16,7 +16,7 @@ import com.example.itaxn.diplomarbeit.fft.FastFourierTransformation;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-
+//Hallo
 public class RecordingActivity extends AppCompatActivity implements View.OnClickListener {
     private Button buttonstart;
     private Button buttonstop;
