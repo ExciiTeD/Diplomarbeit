@@ -16,22 +16,22 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
+        <!-- IMAGE VIEW -->
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/buttonRec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             android:layout_marginEnd="148dp"
             android:layout_marginStart="148dp"
             android:layout_marginTop="128dp"
-            android:text="@string/buttonStart"
+            android:text="@string/buttonRec"
             app:layout_constraintBottom_toTopOf="@+id/button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
+        <!-- TOGGLE Button -->
+        <ToggleButton
             android:id="@+id/button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +43,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button5" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonRec"
+            android:textOff="Start"
+            android:textOn="Stop"
+            />
 
         <Button
             android:id="@+id/button12"

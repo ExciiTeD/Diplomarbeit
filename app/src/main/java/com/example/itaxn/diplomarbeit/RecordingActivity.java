@@ -1,5 +1,7 @@
 package com.example.itaxn.diplomarbeit;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -11,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.itaxn.diplomarbeit.fft.FastFourierTransformation;
 
@@ -18,10 +22,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 //Hallo
 public class RecordingActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button buttonstart;
-    private Button buttonstop;
+    //private Button buttonstart;
+    //private Button buttonstop;
+    private ToggleButton toggleButton;
     private AudioRecord recorder;
     private TextView tv;
+    ObjectAnimator objAnim;
     private FastFourierTransformation fft;
     private short[] audioData;
     private static final short AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
@@ -31,10 +37,19 @@ public class RecordingActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recording);
-        this.buttonstart = (Button) findViewById(R.id.button5);
-        this.buttonstop = (Button) findViewById(R.id.button);
-        this.buttonstart.setOnClickListener(this);
-        this.buttonstop.setOnClickListener(this);
+        this.toggleButton = findViewById(R.id.button);
+        //this.buttonstart = (Button) findViewById(R.id.button5);
+        //this.buttonstop = (Button) findViewById(R.id.button);
+        //this.buttonstart.setOnClickListener(this);
+        //this.buttonstop.setOnClickListener(this);
+        toggleButton.setOnClickListener(this);
+        //ANIMATE RECORDING BUTTON
+        objAnim = ObjectAnimator.ofPropertyValuesHolder(findViewById(R.id.buttonRec), PropertyValuesHolder.ofFloat("scaleX", 1.3f), PropertyValuesHolder.ofFloat("scaleY", 1.3f));
+        objAnim.setDuration(300);
+        objAnim.setRepeatCount(ObjectAnimator.INFINITE);
+        objAnim.setRepeatMode(ObjectAnimator.REVERSE);
+
+        //Back Button
         Button btn1 = findViewById(R.id.button12);
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,10 +76,16 @@ public class RecordingActivity extends AppCompatActivity implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        if (buttonstart == view) {
+        if (toggleButton.isChecked()) {
             this.recordAudio();
+            objAnim.start();
+            //Toast.makeText(this, "Recording",
+                    //Toast.LENGTH_LONG).show();
         } else {
             recorder.stop();
+            objAnim.end();
+            //Toast.makeText(this, "Stopped",
+                    //Toast.LENGTH_LONG).show();
         }
     }
 
