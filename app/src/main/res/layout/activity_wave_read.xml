@@ -25,7 +25,6 @@
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="148dp"
             android:layout_marginStart="148dp"
-            android:layout_marginTop="124dp"
             android:text="@string/backButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -36,7 +35,6 @@
             android:id="@+id/textView_File2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
             android:layout_marginEnd="210dp"
             android:layout_marginStart="24dp"
             android:text="@string/textView_File"
@@ -45,14 +43,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText_Password2" />
+            app:layout_constraintTop_toBottomOf="@+id/editText_Password2"
+            app:layout_constraintVertical_chainStyle="spread" />
 
         <Button
             android:id="@+id/buttonFileSearch2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:layout_marginEnd="170dp"
             android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
             android:text="@string/button5_fileSearch_Text"
             app:layout_constraintBottom_toTopOf="@+id/buttonFindMSG"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,6 +72,7 @@
             android:ems="10"
             android:inputType="textPassword"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView_Password2" />
 
@@ -80,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="155dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="24dp"
             android:contentDescription="@string/textView_Password_Description"
             android:text="@string/textView_Password"
             android:textColor="@color/colorPrimary"
@@ -89,18 +91,18 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside" />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <Button
             android:id="@+id/buttonFindMSG"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="175dp"
             android:layout_marginEnd="141dp"
             android:layout_marginStart="132dp"
             android:layout_marginTop="32dp"
             android:text="@string/button_FindMSG"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/button9"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editText_Password2" />
