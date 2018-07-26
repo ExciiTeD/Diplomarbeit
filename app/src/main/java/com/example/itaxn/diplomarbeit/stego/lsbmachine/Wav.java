@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.Buffer;
 
 /**
  * Class for Wav files. Purpose is to
@@ -34,6 +36,15 @@ public class Wav implements IWav {
     }
 
     /**
+     * Creating a wav object with an Inputstream.
+     * @param inputStream of the wav file.
+     * @param size of the wav file in bytes
+     */
+    public Wav(InputStream inputStream, long size) throws IOException {
+        this.initWithStream(inputStream, size);
+    }
+
+    /**
      * initializes the attributes of this class.
      *
      * @throws IOException if an IO error occurs during the file
@@ -46,6 +57,27 @@ public class Wav implements IWav {
         this.bitsPerSample = this.fileContent[34];
         this.formatCode = this.fileContent[20];
         this.initHeaderSize();
+    }
+
+    private void initWithStream(InputStream inputStream, long size) throws IOException {
+        this.size = (int) size;
+        this.fileContent = new byte[this.size];
+        this.readData(inputStream);
+        this.bitsPerSample = this.fileContent[34];
+        this.formatCode = this.fileContent[20];
+        this.initHeaderSize();
+    }
+
+    /**
+     * Reads the content of the wav file with the given
+     * Inputstrem.
+     * @param inputStream of a wav file
+     * @throws IOException
+     */
+    private synchronized void readData(InputStream inputStream) throws IOException{
+        BufferedInputStream bis = new BufferedInputStream(inputStream, 5);
+        bis.read(this.fileContent);
+        bis.close();
     }
 
     /**
