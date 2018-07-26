@@ -143,7 +143,7 @@ public class WaveReadActivity extends AppCompatActivity implements View.OnClickL
                     //
                     startActivity(intent);
                 } catch (Exception e) {
-                    this.snackBar.setText("No data could be found!s");
+                    this.snackBar.setText("No data could be found!");
                     this.snackBar.show();
                     e.printStackTrace();
                 }
