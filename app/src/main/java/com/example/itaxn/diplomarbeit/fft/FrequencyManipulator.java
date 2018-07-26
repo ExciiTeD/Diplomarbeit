@@ -13,10 +13,8 @@ public class FrequencyManipulator {
     private Context context;
     private Wav wavToManipulate;
     private double[] dataWav;
-    private double[] dataSin20khz;
-    private double[] dataSin21khz;
-    private double[] fftDatasin20;
-    private double[] fftDatasin21;
+    private double[] fftDataSin20;
+    private double[] fftDataSin21;
 
     private boolean contains20khz;
     private boolean contains21khz;
@@ -32,37 +30,44 @@ public class FrequencyManipulator {
     private void initFrequencies() throws IOException {
         InputStream inputStream1 = this.context.getResources().openRawResource(R.raw.sin_20khz);
         InputStream inputStream2 = this.context.getResources().openRawResource(R.raw.sin_21khz);
-        long filesize1 = this.context.getResources().openRawResourceFd(R.raw.sin_20khz).getLength();
-        long filesize2 = this.context.getResources().openRawResourceFd(R.raw.sin_21khz).getLength();
-        Wav sin20khz = new Wav(inputStream1, filesize1);
-        Wav sin21khz = new Wav(inputStream2, filesize2);
+        long fileSize1 = this.context.getResources().openRawResourceFd(R.raw.sin_20khz).getLength();
+        long fileSize2 = this.context.getResources().openRawResourceFd(R.raw.sin_21khz).getLength();
+        Wav sin20khz = new Wav(inputStream1, fileSize1);
+        Wav sin21khz = new Wav(inputStream2, fileSize2);
         this.dataWav = FastFourierTransformation.bytesToDoubleArray(
                 wavToManipulate.getFileContent(), wavToManipulate.getFileSize());
-        this.dataSin20khz = FastFourierTransformation
+        double[] dataSin20khz = FastFourierTransformation
                 .bytesToDoubleArray(sin20khz.getFileContent(), FFT_SIZE);
-        this.dataSin21khz = FastFourierTransformation
+        double[] dataSin21khz = FastFourierTransformation
                 .bytesToDoubleArray(sin21khz.getFileContent(), FFT_SIZE);
-        this.doFFTOnFrequencies();
+        this.doFFTOnFrequencies(dataSin20khz, dataSin21khz);
     }
 
-    private void doFFTOnFrequencies() {
+    private void doFFTOnFrequencies(double[] dataSin20khz, double[] dataSin21khz) {
         FastFourierTransformation fft = new FastFourierTransformation(dataSin20khz);
-        this.fftDatasin20 = fft.doFFT();
+        this.fftDataSin20 = fft.doFFT();
         fft = new FastFourierTransformation(dataSin21khz);
-        this.fftDatasin21 = fft.doFFT();
+        this.fftDataSin21 = fft.doFFT();
     }
 
     /**
      *
-     * @param offset the offset sample were the frequency should be addes to wav file.
+     * @param offset the offset sample were the frequency should be added to wav file.
      */
     public void add20khzSine(int offset) {
         if (!contains20khz) {
             double[] sampleData = new double[FFT_SIZE];
             System.arraycopy(dataWav, offset * FFT_SIZE, sampleData, 0, FFT_SIZE);
-            double[] fftData = new FastFourierTransformation(sampleData).doFFT();
+            FastFourierTransformation fft = new FastFourierTransformation(sampleData);
+            double[] fftData = fft.doFFT();
             this.insertFrequency20khz(fftData);
-            //new FastFourierTransformation();
+            this.addToRawData(fft.inverse(fftData), offset);
+        }
+    }
+
+    private void addToRawData(double[] inverse, int offset) {
+        for (int i = offset; i < offset + FFT_SIZE; i++) {
+            dataWav[i] = inverse[i];
         }
     }
 
@@ -70,22 +75,41 @@ public class FrequencyManipulator {
         for (int i = 0; i < fftData.length/2;i++) {
             int frequency = i * (Wav.SAMPLE_RATE/FFT_SIZE);
             if (frequency > 19800 && frequency < 20200) {
-                fftData[i*2] = fftDatasin20[i*2];
-                fftData[i*2+1] = fftDatasin20[i*2+1];
+                fftData[i*2] = fftDataSin20[i*2];
+                fftData[i*2+1] = fftDataSin20[i*2+1];
                 int j = getOppositeValue(fftData, i*2);
-                fftData[j] = fftDatasin20[j];
-                fftData[j+1] = fftDatasin20[j+1];
+                fftData[j] = fftDataSin20[j];
+                fftData[j+1] = fftDataSin20[j+1];
             }
         }
     }
 
-    public void add21khzSine() {
+    public void add21khzSine(int offset) {
         if (!contains21khz) {
-
+            double[] sampleData = new double[FFT_SIZE];
+            System.arraycopy(dataWav, offset * FFT_SIZE, sampleData, 0, FFT_SIZE);
+            FastFourierTransformation fft = new FastFourierTransformation(sampleData);
+            double[] fftData = fft.doFFT();
+            this.insertFrequency21khz(fftData);
+            fft.inverse(fftData);
+            this.addToRawData(fft.inverse(fftData), offset);
         }
     }
 
-    public static int getOppositeValue(double[] fftData, int position) {
+    private void insertFrequency21khz(double[] fftData) {
+        for (int i = 0; i < fftData.length/2;i++) {
+            int frequency = i * (Wav.SAMPLE_RATE/FFT_SIZE);
+            if (frequency > 20800 && frequency < 21200) {
+                fftData[i*2] = fftDataSin21[i*2];
+                fftData[i*2+1] = fftDataSin21[i*2+1];
+                int j = getOppositeValue(fftData, i*2);
+                fftData[j] = fftDataSin21[j];
+                fftData[j+1] = fftDataSin21[j+1];
+            }
+        }
+    }
+
+    private static int getOppositeValue(double[] fftData, int position) {
         if (position >= fftData.length/2 || position % 2 != 0) {
             throw new IllegalArgumentException("wrong position");
         }

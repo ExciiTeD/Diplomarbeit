@@ -42,7 +42,13 @@ public class FastFourierTransformation {
 
     public double[] inverse(double[] fftData) {
         fft.complexInverse(fftData, true);
-        return fftData;
+        double[] rawData = new double[fftData.length/2];
+
+        for (int i = 0; i < rawData.length; i++) {
+            rawData[i] = fftData[i*2];
+        }
+
+        return rawData;
     }
 
     /**
