@@ -6,8 +6,8 @@ public interface IWav {
     /**
      * Maximum Header size of wav files in Bytes.
      */
-    public static final byte MAX_HEADER_SIZE = 78;
-    public static final String DATA_CHUNK_ID = "data";
+    byte MAX_HEADER_SIZE = 78;
+    int SAMPLE_RATE = 44100;
 
     public void write(byte[] data) throws IOException;
 
