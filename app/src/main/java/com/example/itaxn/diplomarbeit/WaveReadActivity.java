@@ -1,12 +1,6 @@
 package com.example.itaxn.diplomarbeit;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,14 +10,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.itaxn.diplomarbeit.stego.lsbmachine.LSBReader;
 import com.example.itaxn.diplomarbeit.stego.lsbmachine.LSBReaderDecrypter;
-import com.example.itaxn.diplomarbeit.stego.lsbmachine.Wav;
+import com.example.itaxn.diplomarbeit.audio.Wav;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 public class WaveReadActivity extends AppCompatActivity implements View.OnClickListener {
     private String pw;

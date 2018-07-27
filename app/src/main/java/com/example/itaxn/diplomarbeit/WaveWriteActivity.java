@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.example.itaxn.diplomarbeit.stego.lsbmachine.LSBHiderEncrypter;
 import com.example.itaxn.diplomarbeit.stego.lsbmachine.MessageTooLongException;
-import com.example.itaxn.diplomarbeit.stego.lsbmachine.Wav;
+import com.example.itaxn.diplomarbeit.audio.Wav;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
 

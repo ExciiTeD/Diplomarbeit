@@ -12,8 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.itaxn.diplomarbeit.audio.Converter;
+import com.example.itaxn.diplomarbeit.audio.Wav;
 import com.nbsp.materialfilepicker.MaterialFilePicker;
 import com.nbsp.materialfilepicker.ui.FilePickerActivity;
+
+import java.io.IOException;
 
 public class WavPlayerActivity extends AppCompatActivity {
     private MediaPlayer mp;
@@ -63,7 +67,7 @@ public class WavPlayerActivity extends AppCompatActivity {
                 }
             }
 
-        });;
+        });
 
         Button btn1 = findViewById(R.id.button13);
         btn1.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +79,6 @@ public class WavPlayerActivity extends AppCompatActivity {
             }
 
         });
-        //this.mp = MediaPlayer.create(this, new Ur)
     }
 
     private void openFilePicker() {
@@ -95,7 +98,6 @@ public class WavPlayerActivity extends AppCompatActivity {
         if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == RESULT_OK) {
             this.path = data.getStringExtra(FilePickerActivity.RESULT_FILE_PATH);
             prepareMediaPlayer();
-            //prepareMediaPlayer(path);
         }
     }
 
@@ -103,6 +105,14 @@ public class WavPlayerActivity extends AppCompatActivity {
         int index = path.lastIndexOf(".");
         String mimeType = path.substring(index + 1);
         if(mimeType.equals("wav")){
+            try {
+                Wav wav = new Wav(path);
+                if (wav.getNumChannels() == 2) {
+                    Converter.toMono(wav);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             this.mp = MediaPlayer.create(this, Uri.parse(this.path));
             wavReady = true;
             isStopped = false;

@@ -2,6 +2,7 @@ package com.example.itaxn.diplomarbeit.stego.lsbmachine;
 
 import java.io.IOException;
 
+import com.example.itaxn.diplomarbeit.audio.Wav;
 import com.example.itaxn.diplomarbeit.stego.tag.Message;
 
 /**

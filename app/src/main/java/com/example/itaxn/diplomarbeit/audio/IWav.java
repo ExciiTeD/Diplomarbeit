@@ -1,4 +1,4 @@
-package com.example.itaxn.diplomarbeit.stego.lsbmachine;
+package com.example.itaxn.diplomarbeit.audio;
 
 import java.io.IOException;
 
@@ -8,6 +8,8 @@ public interface IWav {
      */
     byte MAX_HEADER_SIZE = 78;
     int SAMPLE_RATE = 44100;
+    short MONO = 1;
+    short STEREO = 2;
 
     public void write(byte[] data) throws IOException;
 
