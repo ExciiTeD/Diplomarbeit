@@ -1,5 +1,6 @@
 package com.example.itaxn.diplomarbeit.stego.lsbmachine;
 
+import com.example.itaxn.diplomarbeit.audio.Wav;
 import com.example.itaxn.diplomarbeit.stego.tag.CheckLengthTag;
 import com.example.itaxn.diplomarbeit.stego.tag.CheckTag;
 import com.example.itaxn.diplomarbeit.stego.tag.LengthTag;

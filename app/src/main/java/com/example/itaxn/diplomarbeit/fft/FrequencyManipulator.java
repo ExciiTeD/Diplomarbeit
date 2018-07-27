@@ -3,7 +3,7 @@ package com.example.itaxn.diplomarbeit.fft;
 import android.content.Context;
 
 import com.example.itaxn.diplomarbeit.R;
-import com.example.itaxn.diplomarbeit.stego.lsbmachine.Wav;
+import com.example.itaxn.diplomarbeit.audio.Wav;
 
 import java.io.IOException;
 import java.io.InputStream;

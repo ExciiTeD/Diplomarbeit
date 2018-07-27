@@ -11,7 +11,7 @@ public class FastFourierTransformation {
     private double[] fftData;
 
     public FastFourierTransformation(double[] soundData) {
-        if (isPowerOfTwo(soundData.length)) {
+        if (!isPowerOfTwo(soundData.length)) {
             throw new IllegalArgumentException("The array length has to be a power of two");
         }
         this.soundData = soundData;

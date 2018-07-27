@@ -1,4 +1,4 @@
-package com.example.itaxn.diplomarbeit.stego.lsbmachine;
+package com.example.itaxn.diplomarbeit.audio;
 
 import java.io.IOException;
 
