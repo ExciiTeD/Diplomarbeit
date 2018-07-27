@@ -9,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -204,6 +203,7 @@ public class Wav implements IWav {
                 .putInt(pcmData.length+36)
                 .putInt(pcmData.length)
                 .array();
+
 
         // Not necessarily the best, but it's very easy to visualize this way
         out.write(new byte[]{
