@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -21,12 +22,14 @@ public class WavPlayerActivity extends AppCompatActivity {
     private boolean isStopped;
     private ToggleButton toggleButton;
     private String path;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wav_player);
         Button button = (Button) findViewById(R.id.button6);
+        textView = findViewById(R.id.textView);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,11 +55,8 @@ public class WavPlayerActivity extends AppCompatActivity {
                 }
                 else {
                     if (wavReady) {
-                        //mp.stop();
-                        //mp.reset();
                         mp.pause();
                         isStopped = true;
-                        //mp = null;
                     } else {
                         Toast.makeText(WavPlayerActivity.this, "No Wav-File to stop", Toast.LENGTH_LONG).show();
                     }
@@ -106,6 +106,10 @@ public class WavPlayerActivity extends AppCompatActivity {
             this.mp = MediaPlayer.create(this, Uri.parse(this.path));
             wavReady = true;
             isStopped = false;
+            int i = path.lastIndexOf("/");
+            String fileName = path.substring(i + 1);
+            textView.setText(fileName);
+
         }
         else{
             Toast.makeText(WavPlayerActivity.this, "Please select a Wav - File", Toast.LENGTH_LONG).show();
