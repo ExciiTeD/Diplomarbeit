@@ -8,6 +8,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Class for Wav files. Purpose is to
@@ -180,8 +184,46 @@ public class Wav implements IWav {
 
 
 
-    public void generateHeaderAndWriteWithPCMData(byte[] chan1) {
+    public void generateHeaderAndWritePCMData(byte[] pcmData) throws IOException {
+        OutputStream out = new FileOutputStream(this.wavFile);
+        writeWavHeader(out, MONO, SAMPLE_RATE, (short) (this.getBitsPerSample()), pcmData);
+        out.write(pcmData);
+    }
 
+    private static void writeWavHeader(OutputStream out, short channels, int sampleRate,
+                                       short bitDepth, byte[] pcmData) throws IOException {
+        // Convert the multi-byte integers to raw bytes in little endian format as required by the spec
+        byte[] littleBytes = ByteBuffer
+                .allocate(22)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putShort(channels)
+                .putInt(sampleRate)
+                .putInt(sampleRate * channels * (bitDepth / 8))
+                .putShort((short) (channels * (bitDepth / 8)))
+                .putShort(bitDepth)
+                .putInt(pcmData.length+36)
+                .putInt(pcmData.length)
+                .array();
+
+        // Not necessarily the best, but it's very easy to visualize this way
+        out.write(new byte[]{
+                // RIFF header
+                'R', 'I', 'F', 'F', // ChunkID
+                littleBytes[14], littleBytes[15], littleBytes[16], littleBytes[17], // ChunkSize
+                'W', 'A', 'V', 'E', // Format
+                // fmt subchunk
+                'f', 'm', 't', ' ', // Subchunk1ID
+                16, 0, 0, 0, // Subchunk1Size
+                1, 0, // AudioFormat
+                littleBytes[0], littleBytes[1], // NumChannels
+                littleBytes[2], littleBytes[3], littleBytes[4], littleBytes[5], // SampleRate
+                littleBytes[6], littleBytes[7], littleBytes[8], littleBytes[9], // ByteRate
+                littleBytes[10], littleBytes[11], // BlockAlign
+                littleBytes[12], littleBytes[13], // BitsPerSample
+                // data subchunk
+                'd', 'a', 't', 'a', // Subchunk2ID
+                littleBytes[18], littleBytes[19], littleBytes[20], littleBytes[21], // Subchunk2Size (must be updated later)
+        });
     }
 
     /**
