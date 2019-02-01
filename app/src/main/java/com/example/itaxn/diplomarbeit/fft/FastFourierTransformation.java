@@ -57,11 +57,11 @@ public class FastFourierTransformation {
      * @return
      */
     public static double[] bytesToDoubleArray(byte[] data, int length) {
-        double[] dArr = new double[length];
+        double[] dArr = new double[data.length/2];
         short[] shorts = new short[data.length/2];
         ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts);
 
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < data.length/2; i++)
             dArr[i] = shorts[i];
         return dArr;
     }
