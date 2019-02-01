@@ -2,6 +2,7 @@ package com.example.itaxn.diplomarbeit.stego.crypto;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.SecretKeyFactory;
@@ -9,11 +10,15 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Pbkdf2 {
+    static final int saltLength = 16;
+    static byte[] salt = new byte[saltLength];
+
 
     protected static String generateStorngPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         int iterations = 65536;
         char[] chars = password.toCharArray();
-        byte[] salt = getSalt();
+
+        generateSalt();
 
         PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 32 * 8); // 256
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -24,13 +29,23 @@ public class Pbkdf2 {
         //return s;
 
     }
+    protected static String generateStorngPasswordHash(String password, byte[] givenSalt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        int iterations = 65536;
+        char[] chars = password.toCharArray();
 
-    protected static byte[] getSalt() throws NoSuchAlgorithmException {
-        byte[] salt = new byte[16];
-        for (int i = 0; i < salt.length; i++) {
-            salt[i] = 1;
-        }
-        return salt;
+        PBEKeySpec spec = new PBEKeySpec(chars, givenSalt, iterations, 32 * 8); // 256
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] hash = skf.generateSecret(spec).getEncoded();
+        //for(int i=0; i<hash.length;i++) {System.out.println(hash[i]);}
+        return toHex(hash);
+        //String s = new String(hash);
+        //return s;
+
+    }
+
+    protected static  void generateSalt() throws NoSuchAlgorithmException {
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(salt);
     }
 
     protected static String toHex(byte[] array) throws NoSuchAlgorithmException {
@@ -45,4 +60,7 @@ public class Pbkdf2 {
         }
     }
 
+    protected static byte[] getSalt(){
+        return salt;
+    }
 }

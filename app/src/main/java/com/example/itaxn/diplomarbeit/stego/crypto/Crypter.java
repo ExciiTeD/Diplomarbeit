@@ -57,9 +57,10 @@ public class Crypter {
             //Encrypt the Message
             byte[] cipherMSG = cipher.doFinal(paddedData.getBytes());
             //Setting up the whole Data package, with IV and encrypted Text
-            byte[] finalDataPackage = new byte[iv.length + cipherMSG.length];
-            System.arraycopy(iv, 0, finalDataPackage, 0, iv.length);
-            System.arraycopy(cipherMSG, 0, finalDataPackage, iv.length, cipherMSG.length);
+            byte[] finalDataPackage = new byte[Pbkdf2.saltLength + iv.length + cipherMSG.length];
+            System.arraycopy(Pbkdf2.getSalt(), 0, finalDataPackage,0, Pbkdf2.saltLength);
+            System.arraycopy(iv, 0, finalDataPackage, Pbkdf2.saltLength, iv.length);
+            System.arraycopy(cipherMSG, 0, finalDataPackage, Pbkdf2.saltLength + iv.length , cipherMSG.length);
             return finalDataPackage;
         } catch (Exception e) {
             System.err.println(e.getMessage());
@@ -73,15 +74,18 @@ public class Crypter {
         byte[] skey = this.hashPassword(password);
         SecretKeySpec key = new SecretKeySpec(skey, "AES");
 
+        byte[] salt = new byte[Pbkdf2.saltLength];
+        System.arraycopy(data, 0, salt, 0, salt.length);
+
         // IV-Auslesen
         byte[] iv = new byte[ivLength];
-        System.arraycopy(data, 0, iv, 0, iv.length);
+        System.arraycopy(data, salt.length, iv, 0, iv.length);
         AlgorithmParameterSpec param = new IvParameterSpec(iv);
         //for (byte ivA : iv) System.out.print(ivA + "; ");
 
         //Restliche Daten auslesen
-        byte[] encryptedMessage = new byte[data.length - iv.length];
-        System.arraycopy(data, iv.length, encryptedMessage, 0, encryptedMessage.length);
+        byte[] encryptedMessage = new byte[data.length - (iv.length + salt.length)];
+        System.arraycopy(data, (iv.length + salt.length), encryptedMessage, 0, encryptedMessage.length);
         //for(byte eM : encryptedMessage) System.out.print(eM + "; ");
 
 
@@ -100,7 +104,7 @@ public class Crypter {
             throw new RuntimeException(e);
         }
     }
-
+/*
     public byte[] decode(String password, byte[] data, int offset, int length, byte[] iv) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException {
         //Setting up the key
         byte[] skey = this.hashPassword(password);
@@ -122,13 +126,14 @@ public class Crypter {
         byte[] decodedMessage = cipher.doFinal(encryptedMessage);
         String trimmedMSG = new String(decodedMessage).replaceAll("\0", "");
         return trimmedMSG.getBytes();
-    }
+    }*/
 
     private byte[] hashPassword(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        byte[] pwB = Pbkdf2.generateStorngPasswordHash(password).getBytes();
-        byte[] skey = new byte[keySize];
-        System.arraycopy(pwB, 0, skey, 0, skey.length);
-        return skey;
+        return Pbkdf2.generateStorngPasswordHash(password).getBytes();
+    }
+
+    private byte[] hashPassword(String password, byte[] salt) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        return Pbkdf2.generateStorngPasswordHash(password, salt).getBytes();
     }
 
     public int getLastDataSize() {
