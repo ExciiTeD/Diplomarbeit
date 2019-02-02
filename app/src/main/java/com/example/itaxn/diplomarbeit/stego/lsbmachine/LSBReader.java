@@ -1,13 +1,13 @@
 package com.example.itaxn.diplomarbeit.stego.lsbmachine;
 
 import com.example.itaxn.diplomarbeit.audio.Wav;
-import com.example.itaxn.diplomarbeit.stego.tag.CheckLengthTag;
-import com.example.itaxn.diplomarbeit.stego.tag.CheckTag;
+import com.example.itaxn.diplomarbeit.stego.tag.HashTag;
 import com.example.itaxn.diplomarbeit.stego.tag.LengthTag;
 import com.example.itaxn.diplomarbeit.stego.tag.Message;
 
 import java.io.IOException;
-import java.util.zip.CRC32;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * The class LSBReader is a class that can extract
@@ -81,17 +81,16 @@ public class LSBReader extends LSBCoder {
      */
     public byte[] read() throws Exception {
         this.setLengthTag();
-        this.setCheckLengthTag();
-        this.setCheckSum();
+        this.setHash();
 
         LengthTag lTag = this.msg.getLengthTag();
-        CheckLengthTag clTag = this.msg.getCLTag();
+        HashTag hTag = this.msg.getHashTag();
 
-        int offset = lTag.getTagLen() + clTag.getTagLen();
+        int offset = lTag.getTagLen();
         int len = (int) (lTag.getTagVal());
 
         this.msg.setMessage(this.read(offset, len));
-        this.compChecksum();
+        this.compHash();
 
         return this.msg.getMessageBytes();
     }
@@ -102,13 +101,17 @@ public class LSBReader extends LSBCoder {
      * <code>IllegalArgumentException</code> will be
      * thrown if the checksumms are not the same.
      */
-    protected void compChecksum() {
-        CRC32 c = new CRC32();
-        c.update(this.msg.getMessageBytes());
-        long checksum1 = c.getValue();
-        long checksum2 = msg.getCheckTag().getTagVal();
-        if (checksum1 != checksum2) {
-            throw new IllegalArgumentException("No matching Checksums");
+    protected void compHash() {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            md.update(this.msg.getMessageBytes());
+            String hash1 = HashTag.toHex(md.digest());
+            String hash2 = this.msg.getHashTag().getHexVal();
+            if (!hash1.equals(hash2)) {
+                throw new IllegalArgumentException("No matching Hashes");
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
     }
 
@@ -131,45 +134,24 @@ public class LSBReader extends LSBCoder {
     }
 
     /**
-     * This methods extracts the check length tag of the manipulated
+     * This methods extracts the hash tag of the manipulated
      * wav file and sets it to the <code>Message</code> object
      * of this class.
-     * Implementation: Sets the offset through the known header
-     * size adding the Lengthtag length multiple the bits per
-     * sample, because the check lengthtag follows the length
-     * tag.
+     * Implementation: the offset will be set through the
+     * known headersize, the tagsize of the lengthtag plus the
+     * value of the lengthtag, because rigth after the message is
+     * the hashtag placed.
      */
-    protected void setCheckLengthTag() {
-        int j = wav.getHeaderSize() + msg.getLengthTag().getTagLen()
-                * wav.getBitsPerSample();
-        StringBuffer sBuf = new StringBuffer();
-
-        this.extractTag(sBuf, j);
-
-        String tag = new String(sBuf);
-        this.msg.setCLTag(new CheckLengthTag(tag));
-    }
-
-    /**
-     * This methods extracts the check tag of the manipulated
-     * wav file and sets it to the <code>Message</code> object
-     * of this class.
-     * Implementation: Sets the offset through the know header size
-     * adding the lengthtag and checklengthtag length and the length
-     * tag value multiplied with the bits per sample value, because the
-     * Checktag follows after the first two tags and the message.
-     */
-    protected void setCheckSum() {
+    protected void setHash() {
         LengthTag lTag = this.msg.getLengthTag();
-        CheckLengthTag clTag = this.msg.getCLTag();
-        int j = (int) (wav.getHeaderSize() + (lTag.getTagVal() +
-                lTag.getTagLen() + clTag.getTagLen()) * (wav.getBitsPerSample()));
+        int j = (int) (wav.getHeaderSize() + (lTag.getTagVal() + lTag.getTagLen())
+                * wav.getBitsPerSample());
         StringBuffer sBuf = new StringBuffer();
 
         this.extractTag(sBuf, j);
 
-        String tag = new String(sBuf);
-        this.msg.setcTag(new CheckTag(tag));
+        String tag = sBuf.toString();
+        this.msg.sethTag(new HashTag(tag));
     }
 
     /**

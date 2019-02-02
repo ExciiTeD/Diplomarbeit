@@ -12,14 +12,9 @@ public class Message {
     private LengthTag lTag;
 
     /**
-     * the check length tag of the message.
+     * The hash tag of the message.
      */
-    private CheckLengthTag clTag;
-
-    /**
-     * The check tag of the message.
-     */
-    private CheckTag cTag;
+    private HashTag hTag;
 
     public Message() {
     }
@@ -43,8 +38,7 @@ public class Message {
      * Generates the tags through the message.
      */
     private void generateTags() {
-        this.cTag = new CheckTag(this.message);
-        this.clTag = new CheckLengthTag(cTag.getTagLen());
+        this.hTag = new HashTag(this.message);
         this.lTag = new LengthTag(this.message.length);
     }
 
@@ -67,21 +61,12 @@ public class Message {
     }
 
     /**
-     * @param clTag, not null
+     * @param hTag, not null
      */
-    public void setCLTag(CheckLengthTag clTag) {
-        if (clTag == null)
+    public void sethTag(HashTag hTag) {
+        if (hTag == null)
             throw new IllegalArgumentException();
-        this.clTag = clTag;
-    }
-
-    /**
-     * @param cTag, not null
-     */
-    public void setcTag(CheckTag cTag) {
-        if (cTag == null)
-            throw new IllegalArgumentException();
-        this.cTag = cTag;
+        this.hTag = hTag;
     }
 
     public byte[] getMessageBytes() {
@@ -92,12 +77,8 @@ public class Message {
         return this.lTag;
     }
 
-    public CheckLengthTag getCLTag() {
-        return this.clTag;
-    }
-
-    public CheckTag getCheckTag() {
-        return this.cTag;
+    public HashTag getHashTag() {
+        return this.hTag;
     }
 
     public String getMessage() {
@@ -105,7 +86,7 @@ public class Message {
     }
 
     public String getWholeMessage() {
-        return lTag.getTag() + clTag.getTag() + new String(message) + cTag.getTag();
+        return lTag.getTag() + new String(message) + hTag.getTag();
     }
 
     @Override

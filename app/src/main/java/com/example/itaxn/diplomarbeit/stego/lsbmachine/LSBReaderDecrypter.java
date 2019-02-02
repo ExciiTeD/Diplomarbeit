@@ -2,8 +2,7 @@ package com.example.itaxn.diplomarbeit.stego.lsbmachine;
 
 import com.example.itaxn.diplomarbeit.audio.Wav;
 import com.example.itaxn.diplomarbeit.stego.crypto.Crypter;
-import com.example.itaxn.diplomarbeit.stego.tag.CheckLengthTag;
-import com.example.itaxn.diplomarbeit.stego.tag.CheckTag;
+import com.example.itaxn.diplomarbeit.stego.tag.HashTag;
 import com.example.itaxn.diplomarbeit.stego.tag.LengthTag;
 
 import java.io.IOException;
@@ -70,15 +69,12 @@ public class LSBReaderDecrypter extends LSBReader {
     public byte[] readMessage(String password) throws Exception {
         this.partOfMessage = this.readPartOfMessage(password, 64);
         this.setLengthTag();
-        this.setCheckLengthTag();
         LengthTag lTag = this.msg.getLengthTag();
-        CheckLengthTag clTag = this.msg.getCLTag();
-        int msgLength = (int) (lTag.getTagLen() + clTag.getTagLen() +
-                lTag.getTagVal() + clTag.getTagVal());
+        int msgLength = (int) (lTag.getTagLen() + lTag.getTagVal() + 130);
         this.partOfMessage = this.readPartOfMessage(password, msgLength);
-        this.setCheckSum();
+        this.setHash();
         this.setMessage();
-        this.compChecksum();
+        this.compHash();
         return this.msg.getMessageBytes();
     }
 
@@ -90,10 +86,8 @@ public class LSBReaderDecrypter extends LSBReader {
      */
     private void setMessage() {
         LengthTag lTag = this.msg.getLengthTag();
-        CheckLengthTag clTag = this.msg.getCLTag();
         byte[] message = new byte[(int) lTag.getTagVal()];
-        System.arraycopy(partOfMessage, lTag.getTagLen() +
-                clTag.getTagLen(), message, 0, (int) lTag.getTagVal());
+        System.arraycopy(partOfMessage, lTag.getTagLen(), message, 0, (int) lTag.getTagVal());
         this.msg.setMessage(message);
     }
 
@@ -113,33 +107,18 @@ public class LSBReaderDecrypter extends LSBReader {
     }
 
     /**
-     * Sets the <code>CheckLengthTag</code> of the message object
-     * by extracting the first characters after the length tag of the
-     * <code>partOfMessage</code> array that were encrypted
-     * before. That's why the offset is the <code>LengthTag</code> length.
-     * If the encryption failed you will probably get an Exception.
-     */
-    @Override
-    protected void setCheckLengthTag() {
-        StringBuffer sBuf = new StringBuffer();
-        this.extractTag(sBuf, this.msg.getLengthTag().getTagLen());
-        this.msg.setCLTag(new CheckLengthTag(sBuf.toString()));
-    }
-
-    /**
      * Sets the <code>CheckTag</code> of the message object by
      * extracting the last characters of the new encrypted message.
      * That's why the offset consists of <code>LengthTag</code> length
      * and value and the <code>CheckLengthTag</code> length.
      */
     @Override
-    protected void setCheckSum() {
+    protected void setHash() {
         StringBuffer sBuf = new StringBuffer();
         LengthTag lTag = this.msg.getLengthTag();
-        CheckLengthTag clTag = this.msg.getCLTag();
-        int offset = (int) (lTag.getTagLen() + clTag.getTagLen() + lTag.getTagVal());
+        int offset = (int) (lTag.getTagLen() + lTag.getTagVal());
         this.extractTag(sBuf, offset);
-        this.msg.setcTag(new CheckTag(sBuf.toString()));
+        this.msg.sethTag(new HashTag(sBuf.toString()));
     }
 
     /**

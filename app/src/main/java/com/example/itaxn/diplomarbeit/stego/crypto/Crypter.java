@@ -59,7 +59,6 @@ public class Crypter {
             byte[] cipherMSG = cipher.doFinal(paddedData.getBytes());
             //Setting up the whole Data package, with IV and encrypted Text
             byte[] finalDataPackage = new byte[Pbkdf2.saltLength + iv.length + cipherMSG.length];
-            System.out.println("mei soiz: " + new String(Pbkdf2.getSalt()));
             System.arraycopy(Pbkdf2.getSalt(), 0, finalDataPackage,0, Pbkdf2.saltLength);
             System.arraycopy(iv, 0, finalDataPackage, Pbkdf2.saltLength, iv.length);
             System.arraycopy(cipherMSG, 0, finalDataPackage, Pbkdf2.saltLength + iv.length , cipherMSG.length);
@@ -75,7 +74,6 @@ public class Crypter {
         //Setting up the key
         byte[] salt = new byte[16];
         System.arraycopy(data,0, salt, 0, salt.length);
-        System.out.println("mei soiz"+new String(salt));
         byte[] skey = this.hashPassword(password, salt);
         SecretKeySpec key = new SecretKeySpec(skey, "AES");
 
