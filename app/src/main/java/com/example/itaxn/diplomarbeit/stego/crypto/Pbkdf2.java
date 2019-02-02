@@ -14,7 +14,7 @@ public class Pbkdf2 {
     static byte[] salt = new byte[saltLength];
 
 
-    protected static String generateStorngPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    protected static byte[] generateStorngPasswordHash(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         int iterations = 65536;
         char[] chars = password.toCharArray();
 
@@ -23,13 +23,14 @@ public class Pbkdf2 {
         PBEKeySpec spec = new PBEKeySpec(chars, salt, iterations, 32 * 8); // 256
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] hash = skf.generateSecret(spec).getEncoded();
+        System.out.println(hash.length);
         //for(int i=0; i<hash.length;i++) {System.out.println(hash[i]);}
-        return toHex(hash);
+        //return toHex(hash);
         //String s = new String(hash);
         //return s;
-
+        return hash;
     }
-    protected static String generateStorngPasswordHash(String password, byte[] givenSalt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    protected static byte[] generateStorngPasswordHash(String password, byte[] givenSalt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         int iterations = 65536;
         char[] chars = password.toCharArray();
 
@@ -37,10 +38,10 @@ public class Pbkdf2 {
         SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] hash = skf.generateSecret(spec).getEncoded();
         //for(int i=0; i<hash.length;i++) {System.out.println(hash[i]);}
-        return toHex(hash);
+        //return toHex(hash);
         //String s = new String(hash);
         //return s;
-
+        return hash;
     }
 
     protected static  void generateSalt() throws NoSuchAlgorithmException {

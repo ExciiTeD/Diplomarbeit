@@ -45,7 +45,7 @@ public class LSBReaderDecrypter extends LSBReader {
      * @throws Exception
      */
     private byte[] readPartOfMessage(String password, int length) throws Exception {
-        length += 16; //add 16 because 16 bytes are needed for the init vector
+        length += 32; //add 32 because 16 bytes are needed for the salt and 16 for the init vector
         int remain = length % 16;
         if (remain != 0) {    //test if the length the message consists of 16 byte blocks
             length += 16 - remain; //add the number that is necessary to get to a 16 byte block and

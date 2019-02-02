@@ -31,6 +31,7 @@ public class Crypter {
 
         //Setting up the Key
         byte[] skey = this.hashPassword(password);
+        System.out.println(skey.length);
         SecretKeySpec key = new SecretKeySpec(skey, "AES");
 
         //Padding the Data
@@ -58,6 +59,7 @@ public class Crypter {
             byte[] cipherMSG = cipher.doFinal(paddedData.getBytes());
             //Setting up the whole Data package, with IV and encrypted Text
             byte[] finalDataPackage = new byte[Pbkdf2.saltLength + iv.length + cipherMSG.length];
+            System.out.println("mei soiz: " + new String(Pbkdf2.getSalt()));
             System.arraycopy(Pbkdf2.getSalt(), 0, finalDataPackage,0, Pbkdf2.saltLength);
             System.arraycopy(iv, 0, finalDataPackage, Pbkdf2.saltLength, iv.length);
             System.arraycopy(cipherMSG, 0, finalDataPackage, Pbkdf2.saltLength + iv.length , cipherMSG.length);
@@ -71,11 +73,11 @@ public class Crypter {
 
     public byte[] decode(String password, byte[] data) throws InvalidKeySpecException, NoSuchAlgorithmException {
         //Setting up the key
-        byte[] skey = this.hashPassword(password);
+        byte[] salt = new byte[16];
+        System.arraycopy(data,0, salt, 0, salt.length);
+        System.out.println("mei soiz"+new String(salt));
+        byte[] skey = this.hashPassword(password, salt);
         SecretKeySpec key = new SecretKeySpec(skey, "AES");
-
-        byte[] salt = new byte[Pbkdf2.saltLength];
-        System.arraycopy(data, 0, salt, 0, salt.length);
 
         // IV-Auslesen
         byte[] iv = new byte[ivLength];
@@ -104,36 +106,13 @@ public class Crypter {
             throw new RuntimeException(e);
         }
     }
-/*
-    public byte[] decode(String password, byte[] data, int offset, int length, byte[] iv) throws InvalidKeySpecException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException {
-        //Setting up the key
-        byte[] skey = this.hashPassword(password);
-        SecretKeySpec key = new SecretKeySpec(skey, "AES");
-
-        // IV
-        AlgorithmParameterSpec param = new IvParameterSpec(iv);
-
-
-        //Restliche Daten auslesen
-        byte[] encryptedMessage = new byte[length];
-        System.arraycopy(data, offset, encryptedMessage, 0, encryptedMessage.length);
-        //System.out.println("eM: ");
-        for (byte eM : encryptedMessage) System.out.print(eM + "; ");
-
-        Cipher cipher = Cipher.getInstance(cipher_type);
-        cipher.init(Cipher.DECRYPT_MODE, key, param);
-        //Encrypt the Message
-        byte[] decodedMessage = cipher.doFinal(encryptedMessage);
-        String trimmedMSG = new String(decodedMessage).replaceAll("\0", "");
-        return trimmedMSG.getBytes();
-    }*/
 
     private byte[] hashPassword(String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        return Pbkdf2.generateStorngPasswordHash(password).getBytes();
+        return Pbkdf2.generateStorngPasswordHash(password);
     }
 
     private byte[] hashPassword(String password, byte[] salt) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        return Pbkdf2.generateStorngPasswordHash(password, salt).getBytes();
+        return Pbkdf2.generateStorngPasswordHash(password, salt);
     }
 
     public int getLastDataSize() {
